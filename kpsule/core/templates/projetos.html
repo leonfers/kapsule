@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="section">
+    <div class="container">
+      <h1 class="title">
+        Kapsule - Projetos
+      </h1>
+      <nav class="panel">
+        <p class="panel-heading">
+          Projetos
+        </p>
+       {% for projeto in projetos %}
+        <a class="panel-block">
+          <span class="panel-icon">
+            <i class="fas fa-cubes" aria-hidden="true"></i>
+          </span>
+         {{  projeto.nome }}
+        </a>
+        {% endfor %}
+        <div class="panel-block">
+          <button class="button is-primary is-outlined is-fullwidth">
+            Novo Projeto
+          </button>
+        </div>
+      </nav>
+      
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<section class="section">
+    <div class="container">
+      <h1 class="title">
+        Kapsule
+      </h1>
+      <nav class="panel">
+        <p class="panel-heading">
+          Usuarios
+        </p>
+       {% for usuario in usuarios %}
+        <a class="panel-block" href = "{% url 'projetos' usuario_id=usuario.id %}">
+          <span class="panel-icon">
+            <i class="fas fa-user" aria-hidden="true"></i>
+          </span>
+         {{  usuario.nome }}
+        </a>
+        {% endfor %}
+      </nav>
+      
+    </div>
+</section>
+{% endblock %}
