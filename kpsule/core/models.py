@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-import datetime
+from datetime import datetime
+import time
 
 
 TIME_CHOICES = (
@@ -13,6 +14,7 @@ TIME_CHOICES = (
 class Usuario(models.Model):
     nome = models.CharField(max_length=400)
     user = models.OneToOneField('auth.User',related_name='usuario' ,on_delete = models.CASCADE)
+    capsula_ativa = models.ForeignKey('Capsula', null=True , on_delete = models.SET_NULL)
 
     class Meta:
         ordering = ('nome',)
@@ -23,9 +25,11 @@ class Usuario(models.Model):
     @property
     def email(self):
         return self.user.email
+
     @property
     def password(self):
         return self.user.password
+
     @property
     def username(self):
         return self.user.username
@@ -69,7 +73,7 @@ class Recurso(models.Model):
     descricao = models.CharField(max_length=200)
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, related_name="recursos")
     custo =  models.IntegerField()
-    quantidade = models.IntegerField(max_length=20)
+    quantidade = models.IntegerField()
 
     def __str__(self):
         return self.nome
@@ -88,6 +92,7 @@ class SubProduto(models.Model):
 
 class Capsula(models.Model):
     nome = models.CharField(max_length=200)
+    ativacao = models.DateTimeField(null = True)
     status = models.BooleanField(default = False)
     descricao = models.CharField(max_length=200)
     tempo_estimado =  models.IntegerField()
@@ -98,6 +103,16 @@ class Capsula(models.Model):
 
     def __str__(self):
         return self.nome
+
+    def changeStatus(self):
+        if(not self.status ):
+            self.ativacao = datetime.now()
+            self.status = True
+        else:
+            
+            self.tempo_gasto += (datetime.now() - self.ativacao.replace(tzinfo = None)).seconds
+            self.ativacao = None
+            self.status = False
 
 
 
