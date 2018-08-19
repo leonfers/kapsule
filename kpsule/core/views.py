@@ -32,6 +32,15 @@ def Dashboard(request, *args, **kwargs):
 
     return HttpResponse(template.render(context,request))
 
+def ChangeStatus(request, *args, **kwargs):
+    capsula = Capsula.objects.get(pk = kwargs["capsula_id"])
+    capsula.changeStatus()
+    capsula.save()
+
+    return redirect(reverse('dashboard', kwargs={'projeto_id': capsula.subProduto.projeto.pk}))
+
+
+
 
 class RegistrarUsuarioView(View):
     template_name = 'form.html'

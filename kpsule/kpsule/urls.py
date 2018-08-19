@@ -24,6 +24,7 @@ urlpatterns = [
     path('', Index, name='home'),
     path('projetos/<int:usuario_id>', Projetos, name='projetos'),
     path('dashboard/<int:projeto_id>', Dashboard, name='dashboard'),
+    path('changeStatus/<int:capsula_id>', ChangeStatus, name='change-status'),
     path('novo_projeto/<int:usuario_id>',RegistrarProjeto.as_view(), name="novo_projeto"),
     path('novo_subproduto/', SubprodutoCreateView.as_view(), name='novo_subproduto'),
     path('novo_kpsule/', RegistrarKpsule.as_view(), name='novo_kpsule'),
