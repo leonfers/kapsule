@@ -73,7 +73,6 @@ class Recurso(models.Model):
     descricao = models.CharField(max_length=200)
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, related_name="recursos")
     custo =  models.IntegerField()
-    quantidade = models.IntegerField()
 
     def __str__(self):
         return self.nome
@@ -107,9 +106,12 @@ class Capsula(models.Model):
     def changeStatus(self):
         if(not self.status ):
             self.ativacao = datetime.now()
+            self.subProduto.projeto.proprietario.capsula_ativa = self
+            self.subProduto.projeto.proprietario.save()
             self.status = True
         else:
-            
+            self.subProduto.projeto.proprietario.capsula_ativa = None
+            self.subProduto.projeto.proprietario.save()
             self.tempo_gasto += (datetime.now() - self.ativacao.replace(tzinfo = None)).seconds
             self.ativacao = None
             self.status = False

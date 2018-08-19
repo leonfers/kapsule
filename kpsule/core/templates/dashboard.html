@@ -1,5 +1,5 @@
 {% extends 'base.html' %} {% load bootstrap %} {% block content %}
-<div class="section  columns">
+<div  class="section  columns">
     <div class="column is-4 ">
         <div class="container">
             <h2 class="title">
@@ -28,20 +28,18 @@
 
 
         <div class="container">
-            <a class="button is-primary is-inverted">SubProdutos</a>
-            <a class="button is-primary is-inverted">Configurações</a>
-            <a class="button is-primary is-inverted" href="{% url 'projetos' usuario_id=projeto.proprietario.id %}">Projetos</a>
+            <a class="button is-primary ">SubProdutos</a>
+            <a class="button is-primary ">Configurações</a>
+            <a class="button is-primary " href="{% url 'projetos' usuario_id=projeto.proprietario.id %}">Projetos</a>
         </div>
 
 
     </div>
-    <div class="column box is-2">
+    <div class="column is-2">
         <div class="container">
-            <h3 class="subtitle">{{ projeto.proprietario.nome }}</h3>
-            <h3 class="subtitle">{{ projeto.proprietario.capsula_ativa.nome }}</h3>
-            <h3 class="subtitle">{{ projeto.proprietario.capsula_ativa.tempo_gasto }}</h3>
-            <p>
-                <i class="fas  fa-clock"></i>&nbsp {{projeto.tempo_atual}}/{{projeto.un_tempo}}</p>
+            <strong>{{ projeto.proprietario.nome }}</strong>
+            <p>{{ projeto.proprietario.capsula_ativa.nome }}</p>
+            <p>{{ projeto.proprietario.capsula_ativa.tempo_gasto }}</p>
         </div>
     </div>
 </div>
@@ -50,23 +48,32 @@
         <div class="container columns">
             {% for subproduto in projeto.subprodutos.all %}
             <div class="column is-3 ">
-                <div class="column">
+                
+                    <a class="button is-small is-danger" href="{% url 'delete-subproduto' subproduto_id=subproduto.id %}"></a>&nbsp
+           
+               
                     <b>{{ subproduto.nome }}</b>
-                </div>
+                    <p>{{ subproduto.descricao }}</p>
+  
                 {% for capsula in subproduto.capsulas.all %}
                 <div class="box column">
                     <div class="columns">
-                        <div class="column is-2">
-                            <a class="button is-small is-info" href = "{% url 'change-status' capsula_id=capsula.id %}"></a>&nbsp
-                            
+                        <div class="column is-1">
+                            <a class="button is-small is-info" href="{% url 'change-status' capsula_id=capsula.id %}"></a>&nbsp
+                        </div>
+
+                        <div class="column is-1">
+                            {% if capsula.status %}
+                            <i class="fas  fa-clock"></i>
+                            {% endif %}
+                        </div>
+                        <div class="column is-7 ">
+                            <strong>{{ capsula.nome }}</strong>
+                            <p>{{ capsula.descricao }}</p>
+                            <p>{{ capsula.tempo_estimado }}</p>
                         </div>
                         <div class="column is-1">
-                                {% if capsula.status %}
-                                <i class="fas  fa-clock"></i>
-                                {% endif %}
-                            </div>
-                        <div class="column is-7 ">
-                            <p>{{ capsula.nome }}</p>
+                            <a class="button is-small is-danger" href="{% url 'delete-capsula' capsula_id=capsula.id %}"></a>&nbsp
                         </div>
                     </div>
                     {% for recurso in projeto.recursos.all %}
@@ -87,8 +94,8 @@
             </div>
             {% endfor %}
         </div>
-        <a class="button is-primary is-outlined is-fullwidth newSubProduto" data-toggle="modal" data-target="#modal_subproduto">            
-                Novo SubProduto            
+        <a class="button is-primary is-fullwidth newSubProduto" data-toggle="modal" data-target="#modal_subproduto">
+            Novo SubProduto
         </a>
     </div>
     <div class="column box is-2">
@@ -100,7 +107,15 @@
                 {% for recurso in projeto.recursos.all %}
                 <div class="box column">
                     <div class="box columns">
-                        <p>{{ recurso.nome }}</p>
+                        <div class="column is-1">
+                            <a class="button is-small is-danger" href="{% url 'delete-recurso' recurso_id=recurso.id %}"></a>&nbsp
+                        </div>
+                        <div class="column">
+                            <p>{{ recurso.nome }}</p>
+                            <p>{{ recurso.descricao }}</p>
+                            <p>{{ recurso.custo }}</p>
+                        </div>
+
                     </div>
                 </div>
                 {% endfor %}
@@ -117,63 +132,60 @@
 </div>
 
 <div class="modal" id="recursoModal">
-  <div class="modal-background"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title">Novo Recurso</p>
-      <button class="delete fechar-recurso" aria-label="close"></button>
-    </header>
-    <section class="modal-card-body">
-    <form method="POST" action="{% url 'novo_recurso'%}">
-        {% csrf_token %}
-        {{recurso_form|bootstrap}}
-        
-        <footer class="modal-card-foot">
-          <button class="button is-success">Save changes</button>
-          <button class="button fechar-recurso">Cancel</button>
-        </footer>
-    </form>
-    </section>
-  </div>
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Novo Recurso</p>
+            <button class="delete fechar-recurso" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <form method="POST" action="{% url 'novo_recurso'%}">
+                {% csrf_token %} {{recurso_form|bootstrap}}
+
+                <footer class="modal-card-foot">
+                    <button class="button is-success">Save changes</button>
+                    <button class="button fechar-recurso">Cancel</button>
+                </footer>
+            </form>
+        </section>
+    </div>
 </div>
 
 <div class="modal" id="kpsuleModal">
-  <div class="modal-background"></div>
-  <div class="modal-card">
-    <header class="modal-card-head">
-      <p class="modal-card-title">Nova Kpsule</p>
-      <button class="delete fechar-kpsule" aria-label="close"></button>
-    </header>
-    <section class="modal-card-body">
-        <form method="POST" action="{% url 'novo_kpsule'%}">
-        {% csrf_token %}
-        {{kpsule_form|bootstrap}}
-        
-    <footer class="modal-card-foot">
-      <button class="button is-success">Save changes</button>
-      <button class="button fechar-kpsule">Cancel</button>
-    </footer>
-    </form>    
-    </section>
-  </div>
+    <div class="modal-background"></div>
+    <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Nova Kpsule</p>
+            <button class="delete fechar-kpsule" aria-label="close"></button>
+        </header>
+        <section class="modal-card-body">
+            <form method="POST" action="{% url 'novo_kpsule'%}">
+                {% csrf_token %} {{kpsule_form|bootstrap}}
+
+                <footer class="modal-card-foot">
+                    <button class="button is-success">Save changes</button>
+                    <button class="button fechar-kpsule">Cancel</button>
+                </footer>
+            </form>
+        </section>
+    </div>
 </div>
 
 <div class="modal" id="subProdutoModal">
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
-          <p class="modal-card-title">Novo SubProduto</p>
-          <button class="delete fechar-subProduto" aria-label="close"></button>
+            <p class="modal-card-title">Novo SubProduto</p>
+            <button class="delete fechar-subProduto" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
-        <form  action="{% url 'novo_subproduto' %}" method="post">
-            {% csrf_token %} 
-            {{subproduto_form|bootstrap}}
-            <footer class="modal-card-foot">
-              <button class="button is-success">Save changes</button>
-              <button class="button fechar-subProduto">Cancel</button>
-            </footer>
-        </form>
+            <form action="{% url 'novo_subproduto' %}" method="post">
+                {% csrf_token %} {{subproduto_form|bootstrap}}
+                <footer class="modal-card-foot">
+                    <button class="button is-success">Save changes</button>
+                    <button class="button fechar-subProduto">Cancel</button>
+                </footer>
+            </form>
         </section>
     </div>
     <button class="modal-close is-large" aria-label="close"></button>
@@ -181,22 +193,22 @@
 
 
 <script type="text/javascript">    
-    $('.newkpsule').on( "click", function() {
-      $('#kpsuleModal').addClass('is-active');
+    $('.newkpsule').on("click", function () {
+        $('#kpsuleModal').addClass('is-active');
     });
-    $('.newrecurso').on( "click", function() {
-      $('#recursoModal').addClass('is-active');
+    $('.newrecurso').on("click", function () {
+        $('#recursoModal').addClass('is-active');
     });
-    $('.newSubProduto').on( "click", function() {
-      $('#subProdutoModal').addClass('is-active');
+    $('.newSubProduto').on("click", function () {
+        $('#subProdutoModal').addClass('is-active');
     });
-    $('.fechar-kpsule').on( "click", function() {
-      $('#kpsuleModal').removeClass('is-active');      
+    $('.fechar-kpsule').on("click", function () {
+        $('#kpsuleModal').removeClass('is-active');
     });
-    $('.fechar-recurso').on( "click", function() {
-      $('#recursoModal').removeClass('is-active');      
+    $('.fechar-recurso').on("click", function () {
+        $('#recursoModal').removeClass('is-active');
     });
-    $('.fechar-subProduto').on( "click", function() {
-      $('#subProdutoModal').removeClass('is-active');      
+    $('.fechar-subProduto').on("click", function () {
+        $('#subProdutoModal').removeClass('is-active');
     });
 </script> {% endblock %}

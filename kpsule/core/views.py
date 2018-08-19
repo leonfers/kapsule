@@ -37,8 +37,27 @@ def ChangeStatus(request, *args, **kwargs):
     capsula.changeStatus()
     capsula.save()
 
+
+
     return redirect(reverse('dashboard', kwargs={'projeto_id': capsula.subProduto.projeto.pk}))
 
+def DeleteCapsule(request, *args, **kwargs):
+    capsula = Capsula.objects.get(pk = kwargs["capsula_id"])
+    capsula.delete()
+
+    return redirect(reverse('dashboard', kwargs={'projeto_id': capsula.subProduto.projeto.pk}))
+
+def DeleteSubProduto(request, *args, **kwargs):
+    sub = SubProduto.objects.get(pk = kwargs["subproduto_id"])
+    sub.delete()
+
+    return redirect(reverse('dashboard', kwargs={'projeto_id': sub.projeto.pk}))
+
+def DeleteRecurso(request, *args, **kwargs):
+    recurso = Recurso.objects.get(pk = kwargs["recurso_id"])
+    recurso.delete()
+
+    return redirect(reverse('dashboard', kwargs={'projeto_id': recurso.projeto.pk}))
 
 
 
