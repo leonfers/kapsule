@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, loader
 from django.contrib.auth import authenticate, get_user_model, login, logout
-from django.views.generic import View
+from django.views.generic import View, UpdateView, ListView
+from django.views.generic.edit import CreateView
 from django.views.generic.base import View
 from .forms import *
 from django.http import HttpResponse
@@ -9,7 +10,6 @@ from django.contrib.auth.decorators import login_required
 
 def Index(request):
     usuarios = Usuario.objects.all()
-
     template = loader.get_template('index.html')
     context = {"usuarios" : usuarios}
     
@@ -17,11 +17,18 @@ def Index(request):
 
 def Projetos(request, *args, **kwargs):
     projetos = Projeto.objects.filter(proprietario_id = kwargs["usuario_id"])
-    context = {"projetos":projetos}
+    usuario = kwargs["usuario_id"]
+    context = {"projetos": projetos, "usuario" : usuario}
     template = loader.get_template('projetos.html')
 
     return HttpResponse(template.render(context,request))
 
+def Dashboard(request, *args, **kwargs):
+    projeto = Projeto.objects.get(pk = kwargs["projeto_id"])
+    context = {"projeto": projeto }
+    template = loader.get_template('dashboard.html')
+
+    return HttpResponse(template.render(context,request))
 
 
 class RegistrarUsuarioView(View):
@@ -47,18 +54,32 @@ class RegistrarUsuarioView(View):
 class RegistrarProjeto(View):
     template_name = 'form_projeto.html'
     titulo = 'Novo Projeto'
+    usuario = 0
+    
 
-    def get(self, request):
+    def get(self, request,  *args, **kwargs):
         form = ProjetoForm()
+        self.usuario = kwargs["usuario_id"]
         return render(request, self.template_name, {'form': form , 'title': self.titulo})
 
-    def post(self,request):
+    def post(self,request, *args, **kwargs):
         form = ProjetoForm(request.POST)
+        self.usuario = kwargs["usuario_id"]
         if form.is_valid():
             dados_form = form.cleaned_data
-            projeto = Projeto(nome=dados_form['nome'], descricao=dados_form['descricao'], escopo=dados_form['escopo'], tempo_estimado=dados_form['tempo_estimado'], orcamento=dados_form['orcamento'], un_tempo=dados_form['un_tempo'], proprietario = Usuarios.objects.get(pk = request.usuario.id))
+            projeto = Projeto(nome=dados_form['nome'], descricao=dados_form['descricao'], escopo=dados_form['escopo'], tempo_estimado=dados_form['tempo_estimado'], orcamento=dados_form['orcamento'], un_tempo=dados_form['un_tempo'], proprietario = Usuario.objects.get(pk = self.usuario))
             projeto.save()
                  
-        return render(request, self.template_name, {'form':form ,'title': self.titulo})
+        return redirect(Projetos, usuario_id = kwargs["usuario_id"])
 
 
+class SubprodutoCreateView(CreateView):
+    model = SubProduto
+    fields = '__all__'
+    form = SubProduto()
+    template_name = 'subproduto_form.html'
+ 
+    def form_valid(self, form):
+        self.object = form.save()
+        return redirect(Dashboard)
+ 

@@ -3,25 +3,29 @@
 <section class="section">
     <div class="container">
       <h1 class="title">
-        Kapsule - Projetos
+          <a  href = "{% url 'home' %}"> Kapsula </a> - Projetos
       </h1>
       <nav class="panel">
         <p class="panel-heading">
           Projetos
         </p>
        {% for projeto in projetos %}
-        <a class="panel-block">
+       <a class="panel-block" href = "{% url 'dashboard' projeto_id=projeto.id %}">
           <span class="panel-icon">
             <i class="fas fa-cubes" aria-hidden="true"></i>
           </span>
          {{  projeto.nome }}
         </a>
         {% endfor %}
+        <a class="is-fullwidth" href = "{% url 'novo_projeto' usuario_id=usuario %}">
         <div class="panel-block">
-          <button class="button is-primary is-outlined is-fullwidth">
-            Novo Projeto
-          </button>
+           
+            <button class="button is-primary is-outlined is-fullwidth">
+              Novo Projeto
+            </button>
+           
         </div>
+      </a>
       </nav>
       
     </div>

@@ -1,0 +1,117 @@
+{% extends 'base.html' %} {% block content %}
+<div class="section  columns">
+    <div class="column is-4 ">
+        <div class="container">
+            <h2 class="title">
+                <a href="{% url 'home' %}"> Kapsula </a> - {{ projeto.nome }}
+            </h2>
+            <h3 class="subtitle">
+                {{ projeto.descricao }}
+            </h3>
+            <div>
+                <div class="columns ">
+                    <span class="tag column is-1 is-success">
+                        <i class="fas  fa-clock"></i>&nbsp {{projeto.tempo_estimado}}/{{projeto.un_tempo}}</span>
+                    <span class="tag column is-1 is-success">
+                        <i class="fas fa-money-bill-wave "></i>&nbsp R$: {{projeto.orcamento}}</span>
+                </div>
+                <div class="columns">
+                    <span class="tag column is-1 is-info">
+                        <i class="fas fa-clock"></i>&nbsp {{projeto.tempo_atual}}/{{projeto.un_tempo}}</span>
+                    <span class="tag column is-1 is-info">
+                        <i class="fas fa-money-bill-wave "></i>&nbsp R$: {{projeto.custo_atual}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="column is-6 ">
+
+
+        <div class="container">
+            <a class="button is-primary is-inverted">SubProdutos</a>
+            <a class="button is-primary is-inverted">Configurações</a>
+            <a class="button is-primary is-inverted" href="{% url 'projetos' usuario_id=projeto.proprietario.id %}">Projetos</a>
+        </div>
+
+
+    </div>
+    <div class="column box is-2">
+        <div class="container">
+            <h3 class="subtitle">{{ projeto.proprietario.nome }}</h3>
+            <p>
+                <i class="fas  fa-clock"></i>&nbsp {{projeto.tempo_atual}}/{{projeto.un_tempo}}</p>
+        </div>
+    </div>
+</div>
+<div class="section box columns is-full-height">
+    <div class="column is-10 ">
+        <div class="container columns">
+            {% for subproduto in projeto.subprodutos.all %}
+            <div class="column is-3 ">
+                <div class="column">
+                    <b>{{ subproduto.nome }}</b>
+                </div>
+                {% for capsula in subproduto.capsulas.all %}
+                <div class="box column">
+                    <p>{{ capsula.nome }}</p>
+                    {% for recurso in projeto.recursos.all %}
+                    <div class="content">
+                        <ul>
+                            <li>{{ recurso.nome }}</li>
+                        </ul>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endfor %}
+
+                <div class="column">
+
+                    <button class="button is-primary is-outlined is-fullwidth">
+                        Nova Capsula
+                    </button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <a data-toggle="modal" data-target="#modal_subproduto" href="{% url 'novo_subproduto' %}">
+            <button class="button is-primary is-outlined is-fullwidth">
+                Novo SubProduto
+            </button>
+        </a>
+    </div>
+
+    <div class="column box is-2">
+        <div class="column is-2">
+            <b>Recursos</b>
+        </div>
+        <div class="container columns">
+            <div class="column is-2">
+                {% for recurso in projeto.recursos.all %}
+                <div class="box column">
+                    <p>{{ recurso.nome }}</p>
+                </div>
+                {% endfor %}
+                <div class="column ">
+                    <button class="button is-primary is-outlined is-fullwidth">
+                        Novo recurso
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+    $('#modal_subproduto').on('show.bs.modal', function (event) {
+        var modal = $(this)
+        $.ajax({
+            url: "{% url 'novo_subproduto' %}",
+            context: document.body
+        }).done(function (response) {
+            modal.html(response);
+        });
+    })
+</script> 
+{% endblock %}

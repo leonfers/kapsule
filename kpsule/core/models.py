@@ -31,11 +31,6 @@ class Usuario(models.Model):
         return self.user.username
 
 
-class Recurso(models.Model):
-    nome = models.CharField(max_length=200)
-    descricao = models.CharField(max_length=200)
-    custo =  models.IntegerField()
-    quantidade = models.IntegerField(max_length=20)
 
 class Projeto(models.Model):  
     nome = models.CharField(max_length = 500)
@@ -48,14 +43,40 @@ class Projeto(models.Model):
 
     def __str__(self):
         return self.nome
+    
+    @property
+    def tempo_atual(self):
+        tempo = 0
+        for sub in self.subprodutos.all():
+            for cap in sub.capsulas.all():
+                tempo += cap.tempo_gasto
+
+        return tempo
+    
+    @property
+    def custo_atual(self):
+        custo = 0
+        for sub in self.subprodutos.all():
+            for cap in sub.capsulas.all():
+                for rec in cap.recursos.all():
+                    custo+=rec.custo
+
+        return custo
+
+class Recurso(models.Model):
+    nome = models.CharField(max_length=200)
+    descricao = models.CharField(max_length=200)
+    projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, related_name="recursos")
+    custo =  models.IntegerField()
+    quantidade = models.IntegerField(max_length=20)
+
 
 class SubProduto(models.Model):
     nome = models.CharField(max_length=200)
-    status = models.BooleanField(default = False)
     descricao = models.CharField(max_length=200)
     tempo_estimado =  models.IntegerField()
     orcamento =  models.IntegerField()
-    projeto= models.ForeignKey(Projeto, on_delete=models.CASCADE)
+    projeto= models.ForeignKey(Projeto, on_delete=models.CASCADE, related_name="subprodutos")
 
 class Capsula(models.Model):
     nome = models.CharField(max_length=200)
@@ -64,7 +85,7 @@ class Capsula(models.Model):
     tempo_estimado =  models.IntegerField()
     tempo_gasto =  models.IntegerField()
     orcamento =  models.IntegerField()
-    subProduto = models.ForeignKey(SubProduto, on_delete=models.CASCADE)
+    subProduto = models.ForeignKey(SubProduto, on_delete=models.CASCADE, related_name="capsulas")
     recursos = models.ManyToManyField(Recurso)
 
 

@@ -17,10 +17,14 @@ from django.contrib import admin
 from core.views import *
 from django.urls import path
 from django.contrib.auth import views
+from django.conf.urls import url
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', Index, name='index'),
+    path('', Index, name='home'),
     path('projetos/<int:usuario_id>', Projetos, name='projetos'),
-    path('novo_projeto/',RegistrarProjeto.as_view(), name="novo_projeto"),
+    path('dashboard/<int:projeto_id>', Dashboard, name='dashboard'),
+    path('novo_projeto/<int:usuario_id>',RegistrarProjeto.as_view(), name="novo_projeto"),
+    url(r'^novo_subproduto/$', SubprodutoCreateView.as_view(), name='novo_subproduto'),
 ]
+
