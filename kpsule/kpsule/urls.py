@@ -28,5 +28,6 @@ urlpatterns = [
     path('novo_projeto/<int:usuario_id>',RegistrarProjeto.as_view(), name="novo_projeto"),
     path('novo_subproduto/', SubprodutoCreateView.as_view(), name='novo_subproduto'),
     path('novo_kpsule/', RegistrarKpsule.as_view(), name='novo_kpsule'),
+    path('novo_recurso/', RegistrarRecurso.as_view(), name='novo_recurso'),
 ]
 

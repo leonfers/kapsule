@@ -87,10 +87,8 @@
             </div>
             {% endfor %}
         </div>
-        <a data-toggle="modal" data-target="#modal_subproduto" href="{% url 'novo_subproduto' %}">
-            <button class="button is-primary is-outlined is-fullwidth">
-                Novo SubProduto
-            </button>
+        <a class="button is-primary is-outlined is-fullwidth newSubProduto" data-toggle="modal" data-target="#modal_subproduto">            
+                Novo SubProduto            
         </a>
     </div>
     <div class="column box is-2">
@@ -107,9 +105,9 @@
                 </div>
                 {% endfor %}
                 <div class="column ">
-                    <button class="button is-primary is-outlined is-fullwidth">
+                    <a class="button is-primary is-outlined is-fullwidth newrecurso" data-toggle="modal" data-target="#recursoModal">
                         Novo recurso
-                    </button>
+                    </a>
                 </div>
             </div>
 
@@ -118,39 +116,87 @@
 
 </div>
 
+<div class="modal" id="recursoModal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Novo Recurso</p>
+      <button class="delete fechar-recurso" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+    <form method="POST" action="{% url 'novo_recurso'%}">
+        {% csrf_token %}
+        {{recurso_form|bootstrap}}
+        
+        <footer class="modal-card-foot">
+          <button class="button is-success">Save changes</button>
+          <button class="button fechar-recurso">Cancel</button>
+        </footer>
+    </form>
+    </section>
+  </div>
+</div>
+
 <div class="modal" id="kpsuleModal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Nova Kpsule</p>
+      <button class="delete fechar-kpsule" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+        <form method="POST" action="{% url 'novo_kpsule'%}">
+        {% csrf_token %}
+        {{kpsule_form|bootstrap}}
+        
+    <footer class="modal-card-foot">
+      <button class="button is-success">Save changes</button>
+      <button class="button fechar-kpsule">Cancel</button>
+    </footer>
+    </form>    
+    </section>
+  </div>
+</div>
+
+<div class="modal" id="subProdutoModal">
     <div class="modal-background"></div>
     <div class="modal-card">
         <header class="modal-card-head">
-            <p class="modal-card-title">Modal title</p>
-            <button class="delete fechar" aria-label="close"></button>
+          <p class="modal-card-title">Novo SubProduto</p>
+          <button class="delete fechar-subProduto" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
-            <form method="POST" action="{% url 'novo_kpsule'%}">
-                {% csrf_token %} {{kpsule_form|bootstrap}}
-                <form>
+        <form  action="{% url 'novo_subproduto' %}" method="post">
+            {% csrf_token %} 
+            {{subproduto_form|bootstrap}}
+            <footer class="modal-card-foot">
+              <button class="button is-success">Save changes</button>
+              <button class="button fechar-subProduto">Cancel</button>
+            </footer>
+        </form>
         </section>
-        <footer class="modal-card-foot">
-            <button class="button is-success">Save changes</button>
-            <button class="button fechar">Cancel</button>
-        </footer>
     </div>
+    <button class="modal-close is-large" aria-label="close"></button>
 </div>
 
-<script type="text/javascript">
-    $('#modal_subproduto').on('show.bs.modal', function (event) {
-        var modal = $(this)
-        $.ajax({
-            url: "{% url 'novo_subproduto' %}",
-            context: document.body
-        }).done(function (response) {
-            modal.html(response);
-        });
-    })
-    $('.newkpsule').on("click", function () {
-        $('#kpsuleModal').addClass('is-active');
+
+<script type="text/javascript">    
+    $('.newkpsule').on( "click", function() {
+      $('#kpsuleModal').addClass('is-active');
     });
-    $('.fechar').on("click", function () {
-        $('#kpsuleModal').removeClass('is-active');
+    $('.newrecurso').on( "click", function() {
+      $('#recursoModal').addClass('is-active');
+    });
+    $('.newSubProduto').on( "click", function() {
+      $('#subProdutoModal').addClass('is-active');
+    });
+    $('.fechar-kpsule').on( "click", function() {
+      $('#kpsuleModal').removeClass('is-active');      
+    });
+    $('.fechar-recurso').on( "click", function() {
+      $('#recursoModal').removeClass('is-active');      
+    });
+    $('.fechar-subProduto').on( "click", function() {
+      $('#subProdutoModal').removeClass('is-active');      
     });
 </script> {% endblock %}

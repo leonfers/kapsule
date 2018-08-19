@@ -7,7 +7,7 @@ from django.urls import reverse
 from .forms import *
 from django.http import HttpResponse
 from .models import *
-from .forms import KpsuleForm
+from .forms import *
 from django.contrib.auth.decorators import login_required
 
 def Index(request):
@@ -27,7 +27,7 @@ def Projetos(request, *args, **kwargs):
 
 def Dashboard(request, *args, **kwargs):
     projeto = Projeto.objects.get(pk = kwargs["projeto_id"])
-    context = {"projeto": projeto, "kpsule_form":KpsuleForm}
+    context = {"projeto": projeto, "kpsule_form":KpsuleForm, "recurso_form": RecursoForm, "subproduto_form": subProdutoForm}
     template = loader.get_template('dashboard.html')
 
     return HttpResponse(template.render(context,request))
@@ -92,8 +92,9 @@ class SubprodutoCreateView(CreateView):
     template_name = 'subproduto_form.html'
  
     def form_valid(self, form):
-        self.object = form.save()
-        return redirect(Dashboard)
+        self.object = form.save(commit=False)
+        self.object.save()
+        return redirect(reverse('dashboard', kwargs={'projeto_id': self.object.projeto.pk}))
 
 
 class RegistrarKpsule(View):
@@ -105,3 +106,14 @@ class RegistrarKpsule(View):
             subProduto = attributes.subProduto
             form.save()
         return redirect(reverse('dashboard', kwargs={'projeto_id': subProduto.projeto.pk}))
+
+
+class RegistrarRecurso(View):
+    def post(self, request, *args, **kwargs):
+        projeto = None
+        form = RecursoForm(request.POST)
+        if form.is_valid():
+            attributes = form.save(commit=False)
+            projeto = attributes.projeto
+            form.save()
+        return redirect(reverse('dashboard', kwargs={'projeto_id': projeto.pk}))
