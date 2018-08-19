@@ -3,9 +3,11 @@ from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.views.generic import View, UpdateView, ListView
 from django.views.generic.edit import CreateView
 from django.views.generic.base import View
+from django.urls import reverse
 from .forms import *
 from django.http import HttpResponse
 from .models import *
+from .forms import KpsuleForm
 from django.contrib.auth.decorators import login_required
 
 def Index(request):
@@ -25,7 +27,7 @@ def Projetos(request, *args, **kwargs):
 
 def Dashboard(request, *args, **kwargs):
     projeto = Projeto.objects.get(pk = kwargs["projeto_id"])
-    context = {"projeto": projeto }
+    context = {"projeto": projeto, "kpsule_form":KpsuleForm}
     template = loader.get_template('dashboard.html')
 
     return HttpResponse(template.render(context,request))
@@ -50,6 +52,7 @@ class RegistrarUsuarioView(View):
             perfil.save()
             return redirect('index')
         return render(request, self.template_name, {'form':form ,'title': self.titulo})
+
 
 class RegistrarProjeto(View):
     template_name = 'form_projeto.html'
@@ -82,4 +85,14 @@ class SubprodutoCreateView(CreateView):
     def form_valid(self, form):
         self.object = form.save()
         return redirect(Dashboard)
- 
+
+
+class RegistrarKpsule(View):
+    def post(self, request, *args, **kwargs):
+        subProduto = None
+        form = KpsuleForm(request.POST)
+        if form.is_valid():
+            attributes = form.save(commit=False)
+            subProduto = attributes.subProduto
+            form.save()
+        return redirect(reverse('dashboard', kwargs={'projeto_id': subProduto.projeto.pk}))

@@ -63,12 +63,16 @@ class Projeto(models.Model):
 
         return custo
 
+
 class Recurso(models.Model):
     nome = models.CharField(max_length=200)
     descricao = models.CharField(max_length=200)
     projeto = models.ForeignKey(Projeto, on_delete=models.CASCADE, related_name="recursos")
     custo =  models.IntegerField()
     quantidade = models.IntegerField(max_length=20)
+
+    def __str__(self):
+        return self.nome
 
 
 class SubProduto(models.Model):
@@ -78,6 +82,10 @@ class SubProduto(models.Model):
     orcamento =  models.IntegerField()
     projeto= models.ForeignKey(Projeto, on_delete=models.CASCADE, related_name="subprodutos")
 
+    def __str__(self):
+        return self.nome
+
+
 class Capsula(models.Model):
     nome = models.CharField(max_length=200)
     status = models.BooleanField(default = False)
@@ -86,8 +94,10 @@ class Capsula(models.Model):
     tempo_gasto =  models.IntegerField()
     orcamento =  models.IntegerField()
     subProduto = models.ForeignKey(SubProduto, on_delete=models.CASCADE, related_name="capsulas")
-    recursos = models.ManyToManyField(Recurso)
+    recursos = models.ManyToManyField(Recurso, null=True)
 
+    def __str__(self):
+        return self.nome
 
 
 

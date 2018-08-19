@@ -1,4 +1,4 @@
-{% extends 'base.html' %} {% block content %}
+{% extends 'base.html' %} {% load bootstrap %} {% block content %}
 <div class="section  columns">
     <div class="column is-4 ">
         <div class="container">
@@ -65,10 +65,9 @@
                 {% endfor %}
 
                 <div class="column">
-
-                    <button class="button is-primary is-outlined is-fullwidth">
+                    <a class="button is-primary is-outlined is-fullwidth newkpsule" data-toggle="modal" data-target="#kpsuleModal">
                         Nova Capsula
-                    </button>
+                    </a>
                 </div>
             </div>
             {% endfor %}
@@ -103,7 +102,27 @@
 
 </div>
 
-<script>
+<div class="modal" id="kpsuleModal">
+  <div class="modal-background"></div>
+  <div class="modal-card">
+    <header class="modal-card-head">
+      <p class="modal-card-title">Modal title</p>
+      <button class="delete fechar" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+        <form method="POST" action="{% url 'novo_kpsule'%}">
+        {% csrf_token %}
+        {{kpsule_form|bootstrap}}
+        <form>
+    </section>
+    <footer class="modal-card-foot">
+      <button class="button is-success">Save changes</button>
+      <button class="button fechar">Cancel</button>
+    </footer>
+  </div>
+</div>
+
+<script type="text/javascript">
     $('#modal_subproduto').on('show.bs.modal', function (event) {
         var modal = $(this)
         $.ajax({
@@ -113,5 +132,11 @@
             modal.html(response);
         });
     })
+    $('.newkpsule').on( "click", function() {
+      $('#kpsuleModal').addClass('is-active');
+    });
+    $('.fechar').on( "click", function() {
+      $('#kpsuleModal').removeClass('is-active');
+    });
 </script> 
 {% endblock %}
